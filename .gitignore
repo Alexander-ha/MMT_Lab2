@@ -1,0 +1,9 @@
+SPARSKIT2
+lapack-3.11.0
+__pycache__
+CSRsystem
+main
+*.txt
+prog
+*.f
+*.o
