@@ -1,9 +1,10 @@
 SPARSKIT2
 lapack-3.11.0
+Ani2D
+ani2D-3.1
 __pycache__
 CSRsystem
 main
 *.txt
 prog
-*.f
 *.o
