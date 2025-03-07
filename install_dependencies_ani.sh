@@ -107,7 +107,7 @@ install_dependencies() {
 }
 
 install_ani2d() {
-    local TAR_FILE="ani2d.tar.gz"
+    local TAR_FILE="ani2D-3.1.tar.gz"
     local INSTALL_MARKER="${ANI2D_DIR}/.installed"
     
     if [ -f "$INSTALL_MARKER" ]; then
