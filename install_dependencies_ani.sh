@@ -219,10 +219,8 @@ compile_prog() {
     gfortran -o "${PROG_NAME}" "${SRC_FILE}" \
         -L"${ANI2D_LIB}" -lilu-3.1 \
         -L"${LAPACK_LIB}" \
-        -Wl,--start-group \
         -lrefblas \
         -llapacke \
-        -Wl,--end-group
 
     if [ $? -eq 0 ]; then
         echo "Программа успешно скомпилирована: ./${PROG_NAME}"
