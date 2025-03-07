@@ -37,6 +37,47 @@ check_sudo() {
     fi
 }
 
+install_lapack() {
+    local LAPACK_VER="3.11.0"
+    local LAPACK_DIR="${PWD}/lapack-${LAPACK_VER}"
+    local LAPACK_TAR="lapack-${LAPACK_VER}.tar.gz"
+    local LAPACK_URL=https://github.com/Reference-LAPACK/lapack/archive/refs/tags/v3.11.0.tar.gz
+
+    if [ -d "${LAPACK_DIR}" ]; then
+        echo "LAPACK ${LAPACK_VER} уже установлен"
+        return 0
+    fi
+
+    echo "Скачивание LAPACK ${LAPACK_VER}..."
+    [ -f "${LAPACK_TAR}" ] || curl -L -o "lapack-3.11.0.tar.gz" "https://github.com/Reference-LAPACK/lapack/archive/refs/tags/v3.11.0.tar.gz"
+
+    echo "Распаковка LAPACK..."
+    tar -xzf lapack-3.11.0.tar.gz || { echo "Ошибка распаковки LAPACK"; exit 1; }
+
+    cd "${LAPACK_DIR}"
+
+    echo "Настройка make.inc..."
+    cp make.inc.example make.inc
+    
+    # Модификация make.inc для совместимости
+    sed -i 's/^FC.*=.*/FC = gfortran/' make.inc
+    sed -i 's/^FFLAGS.*=.*/FFLAGS = -O2 -fPIC/' make.inc
+
+    echo "Сборка BLAS..."
+    make blaslib || { echo "Ошибка сборки BLAS"; exit 1; }
+
+    echo "Сборка LAPACK..."
+    make lapacklib || { echo "Ошибка сборки LAPACK"; exit 1; }
+
+    echo "Сборка LAPACKE..."
+    make lapackelib || { echo "Ошибка сборки LAPACKE"; exit 1; }
+
+    echo "Полная сборка..."
+    make all || { echo "Ошибка полной сборки"; exit 1; }
+
+    cd ..
+}
+
 install_package() {
     local package=$1
     
@@ -123,7 +164,6 @@ install_ani2d() {
         echo "Распаковка архива..."
         tar -xzf "$TAR_FILE"
         rm -f "$TAR_FILE"
-        mv "$(tar -tf "$TAR_FILE" | head -1 | cut -f1 -d"/")" "$ANI2D_DIR"
     fi
 
     # Build
@@ -187,6 +227,7 @@ compile_prog() {
 
 main() {
     install_dependencies
+    install_lapack
     install_ani2d
     compile_prog
     echo "Установка завершена успешно!"
