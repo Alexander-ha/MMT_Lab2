@@ -60,8 +60,15 @@ install_lapack() {
     cp make.inc.example make.inc
     
     # Модификация make.inc для совместимости
-    sed -i 's/^FC.*=.*/FC = gfortran/' make.inc
-    sed -i 's/^FFLAGS.*=.*/FFLAGS = -O2 -fPIC/' make.inc
+    # Для macOS
+    if [ "$OS" = "macOS" ]; then
+        sed -i.bak 's/^FC.*=.*/FC = gfortran/' make.inc
+        sed -i.bak 's/^FFLAGS.*=.*/FFLAGS = -O2 -fPIC/' make.inc
+    else
+    # Для Linux
+        sed -i 's/^FC.*=.*/FC = gfortran/' make.inc
+        sed -i 's/^FFLAGS.*=.*/FFLAGS = -O2 -fPIC/' make.inc
+    fi
 
     echo "Сборка BLAS..."
     make blaslib || { echo "Ошибка сборки BLAS"; exit 1; }
